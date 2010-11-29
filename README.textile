@@ -1,0 +1,17 @@
+h1. Testing javascript in webpages
+
+So, the problem we are always facing.. How do we test javascript? and user
+interface javascript at that?
+
+This attempt at a solution uses Rhino to load webpages, and execute any javascript
+in there, giving you a DOM to work with and check, triggering events on etc.
+
+h2. Give me the gist of it
+
+Well, we provide a simple perl-function to run a javascript file
+against a content-string. That way, so long as you can get the content in a perl
+scalar, you can run javascript against it. You can for instance use
+Catalyst::Test, or Test::WWWW::Mechanize::Catalyst to do that, without needing to
+fork a server etc.
+
+
