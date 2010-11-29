@@ -14,4 +14,17 @@ scalar, you can run javascript against it. You can for instance use
 Catalyst::Test, or Test::WWWW::Mechanize::Catalyst to do that, without needing to
 fork a server etc.
 
+h2. How do I test it?
+
+Well, you need rhino set up. You also need an executable script somewhere in your
+PATH called rhino. Mine looks like this:
+
+bc. #!/bin/bash
+java -cp ~/Projects/js/rhino/js.jar org.mozilla.javascript.tools.shell.Main -opt -1 $@
+
+Once that is in place, you should be able to run prove in the normal way.
+
+bc. prove t/
+
+If all goes well, you should see the regular test output!
 
