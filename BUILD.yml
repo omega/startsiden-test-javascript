@@ -1,0 +1,11 @@
+# Used by startsidens internal build system
+---
+autoinstallver: 1
+installdir: /usr/local/share/startsiden-javascript-test
+depends:
+    - startsiden-javascript-qunit
+    - startsiden-javascript-envjs
+excludeext:
+    - .textile
+excludedir:
+    - t
