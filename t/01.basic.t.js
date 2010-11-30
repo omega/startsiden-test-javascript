@@ -1,4 +1,4 @@
-load("qunit.js");
+load("startsiden-test.js");
 plan(1);
 bootstrap(arguments[0]);
 

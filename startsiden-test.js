@@ -60,7 +60,7 @@ function safe_load(lib) {
         if (!runCommand("test", "-f", file)) {
             found++;
             load(file);
-            // XXX: SHould exit loop here
+            break;
         }
     }
     if (found == 0) {
