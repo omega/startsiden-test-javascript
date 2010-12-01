@@ -29,7 +29,9 @@ function bootstrap(file) {
             'text/javascript': true,
         },
     });
-    window.location = file;
+    if (file) {
+        window.location = file;
+    }
 }
 function init_inc(inc) {
     // What do we have here?
