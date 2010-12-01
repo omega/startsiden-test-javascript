@@ -10,7 +10,6 @@ requires 'Try::Tiny';
 
 install_share;
 
-dpkg_requires 'startsiden-javascript-rhino';
 dpkg_requires 'startsiden-javascript-qunit';
 dpkg_requires 'startsiden-javascript-envjs';
 
