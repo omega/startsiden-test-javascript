@@ -29,6 +29,14 @@ function bootstrap(file) {
             'text/javascript': true,
         },
     });
+    if (typeof(Envjs.alert) == "undefined") {
+        window.displayedAlert = '';
+        // XXX: A Bug in Envjs makes us need to do this:
+        // http://envjs.lighthouseapp.com/projects/21590-envjs/tickets/182-envrhino12-calling-alert-throws-exception-cannot-find-function-alert-in-objec
+        Envjs.alert = function(string) {
+            displayedAlert = string;
+        };
+    };
     if (file) {
         window.location = file;
     }
