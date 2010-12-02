@@ -88,8 +88,13 @@ function getenv(key) {
     var opt = {'output': ''};
     // XXX: does not work on windows!
     if (environment['os.name'].match('Mac OS X|Linux')) {
-        runCommand('printenv', key, opt);
-        print(opt.output);
+        var ret = runCommand('/usr/bin/printenv', key, opt);
+        // print(opt.output);
+        if (ret) {
+            print("Error getting env " + key ); //+ ": " + ret + " " + opt.err "");
+            quit();
+        }
+
     } else {
         print("Unsupported os.name: " + environment['os.name']);
         quit();
