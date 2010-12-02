@@ -35,9 +35,10 @@ sub js_test {
     }
     my $cmd = "rhino $0.js " . join(" ", @argv);
     my $TAP = `$cmd 2>&1`;
+    $TAP ||= '';
     if($?) {
         # Error executing tests
-        warn "Could not execute rhino tests from $0.js: $? $!";
+        warn "Could not execute rhino tests from $0.js: $? $! $TAP";
         exit $?;
     }
     # Now to magically fix the damn TAP :(
