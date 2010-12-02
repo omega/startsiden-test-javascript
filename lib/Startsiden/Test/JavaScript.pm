@@ -37,7 +37,7 @@ sub js_test {
     my $TAP = `$cmd 2>&1`;
     if($?) {
         # Error executing tests
-        warn "Could not execute rhino tests from $0.js: $?";
+        warn "Could not execute rhino tests from $0.js: $? $!";
         exit $?;
     }
     # Now to magically fix the damn TAP :(
