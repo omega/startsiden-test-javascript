@@ -8,6 +8,8 @@ requires 'File::Temp';
 requires 'Path::Class';
 requires 'Try::Tiny';
 
+test_requires 'Test::WWW::Mechanize::Catalyst';
+
 install_share;
 
 dpkg_requires 'startsiden-javascript-qunit';
