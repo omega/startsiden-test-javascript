@@ -7,10 +7,10 @@ my $CLASS = __PACKAGE__;
 
 use Sub::Exporter -setup => {
     exports => [
-        qw(js_test js_test_live),
+        qw(js_test js_live_test),
     ],
     groups => {
-        default => [qw/js_test js_test_live/],
+        default => [qw/js_test js_live_test/],
     },
 };
 
@@ -19,13 +19,30 @@ use File::Temp qw(tempfile);
 use Path::Class;
 use Try::Tiny;
 
-sub js_test_live {
-    my ($url) = @_;
+use Plack::Test;
+use HTTP::Request::Common;
+use Class::MOP;
 
-    my @argv;
+sub js_live_test {
+    my ($app, $url) = @_;
 
-    push(@argv, find_test_lib(), $url);
-    _run_rhino(@argv);
+    unless ($url) {
+        _run_rhino(find_test_lib(), $app); # Only one arg, must be url!
+    } else {
+        $Plack::Test::Impl = 'Server' unless $ENV{PLACK_TEST_IMPL};
+        $ENV{PLACK_SERVER} ||= 'HTTP::Server::Simple';
+
+        Class::MOP::load_class($app);
+        $app->setup_engine('PSGI');
+        my $psgi = sub { $app->run(@_) };
+
+        test_psgi $psgi, sub {
+            my @argv;
+
+            push(@argv, find_test_lib(), shift->(GET $url)->base);
+            _run_rhino(@argv);
+        };
+    }
 }
 sub js_test {
     my ($content) = @_;
