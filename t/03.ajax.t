@@ -1,4 +1,4 @@
 use Startsiden::Test::JavaScript;
 
-js_live_test 't::TestApp' => '/ajax';
+js_live_test cat => 't::TestApp' => '/ajax';
 

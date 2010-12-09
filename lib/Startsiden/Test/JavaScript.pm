@@ -24,11 +24,10 @@ use HTTP::Request::Common;
 use Class::MOP;
 
 sub js_live_test {
-    my ($app, $url) = @_;
 
-    unless ($url) {
-        _run_rhino(find_test_lib(), $app); # Only one arg, must be url!
-    } else {
+    my ($type, $app, $url) = @_;
+
+    if ($type eq 'cat') {
         $Plack::Test::Impl = 'Server' unless $ENV{PLACK_TEST_IMPL};
         $ENV{PLACK_SERVER} ||= 'HTTP::Server::Simple';
 
@@ -42,6 +41,10 @@ sub js_live_test {
             push(@argv, find_test_lib(), shift->(GET $url)->base);
             _run_rhino(@argv);
         };
+    } elsif (!$app and !$url) {
+        _run_rhino(find_test_lib(), $type); # Only one arg, must be url!
+    } else {
+        die "We do not support type $type together with app $app and url $url yet :/";
     }
 }
 sub js_test {
