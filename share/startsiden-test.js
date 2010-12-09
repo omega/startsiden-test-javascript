@@ -102,3 +102,8 @@ function getenv(key) {
     var out = opt.output.replace("\n", "");
     return out;
 }
+
+console = {};
+console.log = function() {
+    print(arguments);
+}

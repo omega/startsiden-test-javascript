@@ -14,12 +14,29 @@ sub index :Path :Args(0) {
     $c->response->body( $c->welcome_message );
 }
 
+sub another :Path('a') :Args(0) {
+    my ( $self, $c ) = @_;
+
+    $c->response->body( 'another endpoint' );
+}
+
 sub default :Path {
     my ( $self, $c ) = @_;
     $c->response->body( 'Page not found' );
     $c->response->status(404);
 }
 
+sub new_content :Path('/new') {
+    my ( $self, $c ) = @_;
+
+    $c->response->body('C');
+}
+
+sub ajax :Path('/ajax') {
+    my ( $self, $c ) = @_;
+    my $url = $c->uri_for('/static/jq.js');
+    $c->serve_static_file('t/root/ajax.html');
+}
 
 sub end : ActionClass('RenderView') {}
 

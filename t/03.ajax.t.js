@@ -1,0 +1,24 @@
+load(arguments[0]);
+bootstrap(arguments[1]);
+plan(3);
+test("Check that ajax!", 2, function() {
+    var e = document.getElementById('content');
+    equals(e.innerHTML, "a", "content is a at the start");
+
+    // Lets try to click a button
+    $('#button').click();
+    equals(e.innerHTML, 'B', "content get switched to B when we click first button");
+
+});
+$('#button2').click();
+test("For real, check the ajax!", function() {
+    stop();
+    expect(1);
+    var t = setTimeout(function() {
+
+        equals($('#content').html(), 'C', "and then to C in ajax call");
+        start();
+    }, 1000);
+});
+
+Envjs.wait();

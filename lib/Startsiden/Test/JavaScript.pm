@@ -7,10 +7,10 @@ my $CLASS = __PACKAGE__;
 
 use Sub::Exporter -setup => {
     exports => [
-        qw(js_test),
+        qw(js_test js_test_live),
     ],
     groups => {
-        default => [qw/js_test/],
+        default => [qw/js_test js_test_live/],
     },
 };
 
@@ -19,6 +19,14 @@ use File::Temp qw(tempfile);
 use Path::Class;
 use Try::Tiny;
 
+sub js_test_live {
+    my ($url) = @_;
+
+    my @argv;
+
+    push(@argv, find_test_lib(), $url);
+    _run_rhino(@argv);
+}
 sub js_test {
     my ($content) = @_;
     my @argv;
@@ -33,7 +41,11 @@ sub js_test {
         # now to pass that to the JS test
         push(@argv, $file);
     }
-    my $cmd = "rhino $0.js " . join(" ", @argv);
+    _run_rhino(@argv);
+}
+sub _run_rhino {
+    my $cmd = ($ENV{RHINO_DEBUG} ? 'rhinod' : 'rhino');
+    $cmd = "$cmd $0.js " . join(" ", @_);
     my $TAP = `$cmd 2>&1`;
     $TAP ||= '';
     if($?) {
@@ -44,7 +56,6 @@ sub js_test {
     # Now to magically fix the damn TAP :(
     _parse_tests($TAP);
 }
-
 sub _parse_tests {
     my $b = $CLASS->builder;
     if ($b->has_plan || $b->current_test) {

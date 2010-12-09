@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <script type="text/javascript" src="/static/jq.js"></script>
+        <script type="text/javascript">
+            $().ready(function() {
+                $('#button').click(function() {
+                    $('#content').html('B');
+                });
+                // lets try to replace some content as well!
+                $('#button2').click(function() {
+                    $('#content').load('/new');
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div id="content">a</div>
+        <button id="button">Click me!</button>
+        <button id="button2">Click me!</button>
+    </body>
+</html>
