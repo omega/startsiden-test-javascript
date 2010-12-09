@@ -35,12 +35,15 @@ sub js_live_test {
         $app->setup_engine('PSGI');
         my $psgi = sub { $app->run(@_) };
 
-        test_psgi $psgi, sub {
-            my @argv;
+        _run_psgi($psgi, $url);
 
-            push(@argv, find_test_lib(), shift->(GET $url)->base);
-            _run_rhino(@argv);
-        };
+    } elsif ($type eq 'psgi') {
+        # We try to load the psgi and use that
+        require Plack::Util;
+
+        my $psgi = Plack::Util::load_psgi($app);
+
+        _run_psgi($psgi, $url);
     } elsif (!$app and !$url) {
         _run_rhino(find_test_lib(), $type); # Only one arg, must be url!
     } else {
@@ -62,6 +65,16 @@ sub js_test {
         push(@argv, $file);
     }
     _run_rhino(@argv);
+}
+
+sub _run_psgi {
+    my ($psgi, $url) = @_;
+    test_psgi $psgi, sub {
+        my @argv;
+
+        push(@argv, find_test_lib(), shift->(GET $url)->base);
+        _run_rhino(@argv);
+    };
 }
 sub _run_rhino {
     my $cmd = ($ENV{RHINO_DEBUG} ? 'rhinod' : 'rhino');

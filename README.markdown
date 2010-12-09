@@ -121,9 +121,15 @@ Again, the Perl-portion of the test is simple. Consider the folowing in
     use Startsiden::Test::JavaScript;
     js_live_test cat => 't::TestApp' => '/ajax';
 
-Quite simple ehh? Let me explain: First we have a flag for app-type. For now we
-only support cat, but implementing PSGI for instance should be a breeze, since
-we already use Plack::Test for actually running the Cat-app :p
+Quite simple ehh? Let me explain: First we have a flag for app-type. We support
+two types at the moment, one being `cat` for Catalyst apps, the other being
+`psgi` for PSGI-apps.
+
+The `cat` type will load the class, then enable the PSGI-engine on it, and get
+a PSGI-app out of that, while the `psgi` type will just load a psgi-file:
+
+    use Startsiden::Test::JavaScript;
+    js_live_test psgi => 'app.psgi' => '/';
 
 Then we can look at the javascript part again, in `t/03.ajax.t.js`:
 
