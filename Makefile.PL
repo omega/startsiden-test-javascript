@@ -7,6 +7,11 @@ requires 'File::ShareDir';
 requires 'File::Temp';
 requires 'Path::Class';
 requires 'Try::Tiny';
+requires 'Plack::Test';
+requires 'Plack::Builder';
+requires 'HTTP::Request::Common';
+requires 'Class::MOP';
+requires 'Capture::Tiny';
 
 test_requires 'Test::WWW::Mechanize::Catalyst';
 
