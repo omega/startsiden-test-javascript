@@ -20,6 +20,8 @@ use Path::Class;
 use Try::Tiny;
 
 use Plack::Test;
+use Plack::Builder qw();
+
 use HTTP::Request::Common;
 use Class::MOP;
 
@@ -28,8 +30,6 @@ sub js_live_test {
     my ($type, $app, $url) = @_;
 
     if ($type eq 'cat') {
-        $Plack::Test::Impl = 'Server' unless $ENV{PLACK_TEST_IMPL};
-        $ENV{PLACK_SERVER} ||= 'HTTP::Server::Simple';
 
         Class::MOP::load_class($app);
         $app->setup_engine('PSGI');
@@ -69,7 +69,15 @@ sub js_test {
 
 sub _run_psgi {
     my ($psgi, $url) = @_;
-    test_psgi $psgi, sub {
+    $Plack::Test::Impl = 'Server' unless $ENV{PLACK_TEST_IMPL};
+    $ENV{PLACK_SERVER} ||= 'HTTP::Server::Simple';
+    my $app = Plack::Builder::builder {
+        if ($ENV{TEST_VERBOSE}) {
+            Plack::Builder::enable 'Plack::Middleware::AccessLog';
+        }
+        $psgi;
+    };
+    test_psgi $app, sub {
         my @argv;
 
         push(@argv, find_test_lib(), shift->(GET $url)->base);
