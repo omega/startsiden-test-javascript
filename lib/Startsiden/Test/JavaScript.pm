@@ -25,6 +25,8 @@ use Plack::Builder qw();
 use HTTP::Request::Common;
 use Class::MOP;
 
+use Capture::Tiny;
+
 sub js_live_test {
 
     my ($type, $app, $url) = @_;
@@ -87,48 +89,13 @@ sub _run_psgi {
 sub _run_rhino {
     my $cmd = ($ENV{RHINO_DEBUG} ? 'rhinod' : 'rhino');
     $cmd = "$cmd $0.js " . join(" ", @_);
-    my $TAP = `$cmd 2>&1`;
+    my $TAP = Capture::Tiny::tee_merged { system($cmd) };
     $TAP ||= '';
     if($?) {
         # Error executing tests
         warn "Could not execute rhino tests from $0.js: $? $! $TAP";
         exit $?;
     }
-    # Now to magically fix the damn TAP :(
-    _parse_tests($TAP);
-}
-sub _parse_tests {
-    my $b = $CLASS->builder;
-    if ($b->has_plan || $b->current_test) {
-        # We are already in a test, lets not mess with that
-        $b = $b->child;
-    }
-    my $seen_plan = 0;
-    my @lines = split(/\n/, shift);
-    foreach (@lines) {
-        #warn "$seen_plan L: $_\n";
-        if (!$seen_plan && $_ =~ m/^\d+..(\d+)/) {
-            $seen_plan++;
-            $b->plan(tests => $1) if $1;
-        } elsif (!$seen_plan and $_ =~ m/^\s*(?:not |)ok/) {
-            # There is no plan!
-            $seen_plan++;
-        }
-        if ($seen_plan) {
-            # XXX: This is ugly, but we only need to support these 3 for now
-            if (/^\s*#\s*(.*)/) {
-                $b->diag($1);
-            } elsif (/^\s*ok\s+(\d+)(?:\s+-\s*(.*)|)/) {
-                $b->ok($1, $2);
-            } elsif (/^\s*not ok\s+(\d+)(?: - (.*)|)/) {
-                $b->ok(!$1, $2);
-            }
-        }
-    }
-    if (!$b->has_plan) {
-        $b->done_testing;
-    }
-    $b->finalize;
 }
 sub find_test_lib {
     # XXX: Need to support devel checkouts as well

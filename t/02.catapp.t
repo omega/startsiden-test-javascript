@@ -5,7 +5,5 @@ use Test::WWW::Mechanize::Catalyst;
 
 my $m = Test::WWW::Mechanize::Catalyst->new(catalyst_app => 't::TestApp');
 
-$m->get_ok('/');
+$m->get('/');
 js_test $m->content;
-
-done_testing();
