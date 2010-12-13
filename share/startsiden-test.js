@@ -28,6 +28,24 @@ function bootstrap(file) {
              '': true,
             'text/javascript': true,
         },
+        onSciptLoadError: function(script) {
+            console.error('failed to load script: ' + script.src);
+        },
+        /*
+        beforeScriptLoad: {
+            '': function(script) {
+                console.log("About to load " + script.src);
+            }
+        },
+        afterScriptLoad: {
+            '': function(script) {
+                console.log("After loading " + script.src);
+            },
+            '/jquery-1': function(script) {
+                console.log('jquery: ' + $);
+            }
+        }
+        */
     });
     if (typeof(Envjs.alert) == "undefined") {
         window.displayedAlert = '';
