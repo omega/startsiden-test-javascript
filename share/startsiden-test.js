@@ -121,7 +121,9 @@ function getenv(key) {
     return out;
 }
 
-console = {};
-console.log = function() {
-    print(arguments);
+if (typeof(console) == "undefined") {
+    console = {};
+    console.log = function() {
+        print(arguments);
+    }
 }
