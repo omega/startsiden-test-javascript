@@ -13,6 +13,7 @@ requires 'Capture::Tiny';
 requires 'Class::Load';
 
 test_requires 'Test::WWW::Mechanize::Catalyst';
+test_requires 'Catalyst::Plugin::Static::Simple';
 
 install_share;
 
