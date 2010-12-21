@@ -109,8 +109,10 @@ function getenv(key) {
         var ret = runCommand('/usr/bin/printenv', key, opt);
         // print(opt.output);
         if (ret) {
-            print("Error getting env " + key ); //+ ": " + ret + " " + opt.err "");
-            quit();
+            // XXX: Not sure if we should do this!
+            // print("Error getting env " + key ); //+ ": " + ret + " " + opt.err "");
+            // quit();
+            opt.output = '';
         }
 
     } else {
