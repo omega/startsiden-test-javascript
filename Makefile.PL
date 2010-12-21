@@ -15,6 +15,7 @@ requires 'Class::Load';
 test_requires 'Test::WWW::Mechanize::Catalyst';
 test_requires 'Catalyst::Plugin::Static::Simple';
 test_requires 'Catalyst::Plugin::ConfigLoader';
+test_requires 'Catalyst::Action::RenderView';
 
 install_share;
 
