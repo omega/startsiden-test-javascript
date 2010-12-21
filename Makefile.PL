@@ -9,8 +9,8 @@ requires 'Path::Class';
 requires 'Try::Tiny';
 requires 'Plack';
 requires 'HTTP::Request::Common';
-requires 'Class::MOP';
 requires 'Capture::Tiny';
+requires 'Class::Load';
 
 test_requires 'Test::WWW::Mechanize::Catalyst';
 

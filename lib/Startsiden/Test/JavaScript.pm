@@ -23,7 +23,7 @@ use Plack::Test;
 use Plack::Builder qw();
 
 use HTTP::Request::Common;
-use Class::MOP;
+use Class::Load qw();
 
 use Capture::Tiny;
 
@@ -33,7 +33,7 @@ sub js_live_test {
 
     if ($type eq 'cat') {
 
-        Class::MOP::load_class($app);
+        Class::Load::load_class($app);
         $app->setup_engine('PSGI');
         my $psgi = sub { $app->run(@_) };
 
@@ -75,6 +75,8 @@ sub _run_psgi {
     $ENV{PLACK_SERVER} ||= 'HTTP::Server::Simple';
     my $app = Plack::Builder::builder {
         if ($ENV{TEST_VERBOSE}) {
+            # XXX: Fix the format to be a bit nicer.. too much info now.
+            # Remember to start with #, since we output TAP
             Plack::Builder::enable 'Plack::Middleware::AccessLog';
         }
         $psgi;
