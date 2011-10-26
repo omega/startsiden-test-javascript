@@ -1,131 +1,129 @@
 /* We want to be able to look in different places! */
-var inc = new Array();
 
-init_inc(inc);
+var inc = phantom.args[2].split(':');
+var fs = require('fs');
 
-safe_load("qunit.js");
-safe_load("qunit-tap.js");
-
-QUnit.init();
-QUnit.config.blocking = false;
-QUnit.config.autorun = true;
-QUnit.config.updateRate = 0;
-
-function plan(n) {
-    print("1.." + n);
-}
-function diag(msg) {
-    print("# " + msg);
-}
-
-function bootstrap(file) {
-    safe_load("env.rhino.js");
-    Envjs({
-        log: function(string) {
-            diag(string);
-        },
-        scriptTypes: {
-             '': true,
-            'text/javascript': true,
-        },
-        onSciptLoadError: function(script) {
-            console.error('failed to load script: ' + script.src);
-        },
-        /*
-        beforeScriptLoad: {
-            '': function(script) {
-                console.log("About to load " + script.src);
-            }
-        },
-        afterScriptLoad: {
-            '': function(script) {
-                console.log("After loading " + script.src);
-            },
-            '/jquery-1': function(script) {
-                console.log('jquery: ' + $);
-            }
+function load(lib, into) {
+    //console.log("looking for " + lib);
+    // Blah, this is probably not cool
+    inc.forEach(function(path) {
+        var test = path + fs.separator + lib;
+        //console.log("  -> " + test);
+        if (fs.isFile(test)) {
+            //console.log("    -> FOUND");
+            into.injectJs(test);
         }
-        */
     });
-    if (typeof(Envjs.alert) == "undefined") {
-        window.displayedAlert = '';
-        // XXX: A Bug in Envjs makes us need to do this:
-        // http://envjs.lighthouseapp.com/projects/21590-envjs/tickets/182-envrhino12-calling-alert-throws-exception-cannot-find-function-alert-in-objec
-        Envjs.alert = function(string) {
-            displayedAlert = string;
-        };
-    };
-    if (file) {
-        window.location = file;
-    }
 }
-function init_inc(inc) {
-    // What do we have here?
-    var cp = environment['java.class.path'];
-    // java.class.path: /Users/andremar/Projects/js/rhino/js.jar
-    if (cp.match('/usr/local/share/rhino')) {
-        // XXX: I hate hardcoding these, but blah!
-        inc.push('/usr/local/share/startsiden-javascript-qunit');
-        inc.push('/usr/local/share/startsiden-javascript-envjs');
-    }
+function waitFor(testFx, onReady, timeOutMillis) {
+    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 3001, //< Default Max Timout is 3s
+        start = new Date().getTime(),
+        condition = false,
+        interval = setInterval(function() {
+            if ( (new Date().getTime() - start < maxtimeOutMillis) && !condition ) {
+                // If not time-out yet and condition not yet fulfilled
+                condition = (typeof(testFx) === "string" ? eval(testFx) : testFx()); //< defensive code
+            } else {
+                if(!condition) {
+                    // If condition still not fulfilled (timeout but condition is 'false')
+                    // console.log("'waitFor()' timeout");
+                    phantom.exit(1);
+                } else {
+                    // Condition fulfilled (timeout and/or condition is 'true')
+                    // console.log("'waitFor()' finished in " + (new Date().getTime() - start) + "ms.");
+                    typeof(onReady) === "string" ? eval(onReady) : onReady(); //< Do what it's supposed to do once the condition is fulfilled
+                    clearInterval(interval); //< Stop this interval
+                }
+            }
+        }, 100); //< repeat check every 250ms
+};
 
-    var paths = getinc();
-    for (i in paths) {
-        inc.push(paths[i]);
-    }
-}
-function safe_load(lib) {
-    var found = 0;
-    for (dir in inc) {
-        // Need to check if our lib exists here
-        // XXX: Not working on windows with the whole / biz
-        dir = inc[dir];
-        if (!dir.match(environment['file.separator'] + "$")) {
-            dir = dir + environment['file.separator'];
-        }
-        var file = dir + lib;
 
-        if (!runCommand("test", "-f", file)) {
-            found++;
-            load(file);
-            break;
-        }
-    }
-    if (found == 0) {
-        print("Could not find " + lib + " in our INC(" + inc.join(":") + ")");
-    } else if (found > 1) {
-        print("We found more than one version of "
-                + lib + " in our INC(" + inc.join(":") + ")");
-    }
-}
-function getinc() {
-    var path = getenv("JSINC");
-    return path.split(':');
-}
-function getenv(key) {
-    var opt = {'output': ''};
-    // XXX: does not work on windows!
-    if (environment['os.name'].match('Mac OS X|Linux')) {
-        var ret = runCommand('/usr/bin/printenv', key, opt);
-        // print(opt.output);
-        if (ret) {
-            // XXX: Not sure if we should do this!
-            // print("Error getting env " + key ); //+ ": " + ret + " " + opt.err "");
-            // quit();
-            opt.output = '';
-        }
-
-    } else {
-        print("Unsupported os.name: " + environment['os.name']);
-        quit();
-    }
-    var out = opt.output.replace("\n", "");
-    return out;
-}
 
 if (typeof(console) == "undefined") {
     console = {};
     console.log = function() {
         print(arguments);
     }
+}
+
+
+
+/* lets run the test */
+
+
+var page = require('webpage').create();
+
+
+page.onConsoleMessage = function(msg) {
+    console.log(msg);
+};
+
+var file = phantom.args[1];
+
+if (file) {
+    page.open(file, function(status) {
+        if (status !== "success") {
+            console.log("# (" + status + ") Unable to access requested document " + file);
+            phantom.exit(1);
+        } else {
+
+            load("qunit.js", page);
+            load("qunit-tap.js", page);
+            page.evaluate(function() {
+                window.plan = function(n) {
+                    console.log("1.." + n);
+                }
+                window.diag = function(msg) {
+                    console.log("# " + msg);
+                }
+                window.addListener = function(target, name, func) {
+                    if (typeof target[name] === 'function') {
+                        var orig = target[name];
+                        target[name] = function() {
+                            var args = Array.prototype.slice.apply(arguments);
+                            orig.apply(target, args);
+                            func.apply(target, args);
+                        };
+                    } else {
+                        target[name] = func;
+                    }
+                };
+
+                QUnit.init();
+                QUnit.config.blocking = false;
+                QUnit.config.autorun = true;
+                QUnit.config.updateRate = 0;
+                qunitTap(QUnit, function() { console.log.apply(console, arguments); });
+                window.modules = 0;
+                window.tests = 0;
+
+                addListener(QUnit, 'moduleStart', function() {
+                    window.modules++;
+                });
+                addListener(QUnit, 'moduleDone', function() {
+                    window.modules--;
+                });
+                addListener(QUnit, 'testStart', function() {
+                    window.tests++;
+                });
+                addListener(QUnit, 'testDone', function() {
+                    window.tests--;
+                });
+
+            });
+
+            page.injectJs(phantom.args[0]);
+
+            waitFor(function() {
+                return page.evaluate(function() {
+                    //console.log(window.tests + " " + window.modules);
+                    return (window.tests == 0 && window.modules == 0);
+                });
+            }, function() {
+                //console.log("in another function");
+                phantom.exit();
+            });
+        }
+    });
 }

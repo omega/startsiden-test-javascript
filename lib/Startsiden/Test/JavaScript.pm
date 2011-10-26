@@ -34,8 +34,8 @@ sub js_live_test {
     if ($type eq 'cat') {
 
         Class::Load::load_class($app);
-        $app->setup_engine('PSGI');
-        my $psgi = sub { $app->run(@_) };
+        #$app->setup_engine('PSGI');
+        my $psgi = $app->psgi_app;
 
         _run_psgi($psgi, $url);
 
@@ -57,16 +57,19 @@ sub js_test {
     my @argv;
 
     push(@argv, find_test_lib());
+    my $f;
 
     if ($content) {
         # Need to write out the content to a temp-file
-        my ($fh, $file) = tempfile();
+        my ($fh, $file) = tempfile( DIR => 't/', SUFFIX => '.html', CLEANUP => 1 );
         print $fh $content;
         close $fh;
         # now to pass that to the JS test
         push(@argv, $file);
+        $f = $file;
     }
     _run_rhino(@argv);
+    unlink($f);
 }
 
 sub _run_psgi {
@@ -89,8 +92,10 @@ sub _run_psgi {
     };
 }
 sub _run_rhino {
-    my $cmd = ($ENV{RHINO_DEBUG} ? 'rhinod' : 'rhino');
-    $cmd = "$cmd $0.js " . join(" ", @_);
+    my $cmd = 'phantomjs';
+    # XXX: Should send in location for qunit etc probably
+    $cmd = "$cmd " . shift . " $0.js " . join(" ", @_, $ENV{JSINC});
+    #warn "CMD: $cmd";
     my $TAP = Capture::Tiny::tee_merged { system($cmd) };
     $TAP ||= '';
     if($?) {

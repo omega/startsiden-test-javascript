@@ -1,5 +1,3 @@
-load(arguments[0]);
-bootstrap(arguments[1]);
 plan(4);
 test("check that we can use jQuery from another JS file", 1, function() {
     equals($('#append').html(), "D", "Yeah, found appended div");
