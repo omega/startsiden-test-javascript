@@ -59,7 +59,10 @@ sub js_test {
     push(@argv, find_test_lib());
     my $f;
 
-    if ($content) {
+    if ($content and $content !~ /\n/ and -f $content) {
+        # Content is a file :p
+        push(@argv, $content);
+    } elsif ($content) {
         # Need to write out the content to a temp-file
         my ($fh, $file) = tempfile( DIR => 't/', SUFFIX => '.html', CLEANUP => 1 );
         print $fh $content;
@@ -69,7 +72,7 @@ sub js_test {
         $f = $file;
     }
     _run_rhino(@argv);
-    unlink($f);
+    unlink($f) if $f;
 }
 
 sub _run_psgi {
