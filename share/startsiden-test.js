@@ -123,7 +123,7 @@ if (file) {
             }, function() {
                 //console.log("in another function");
                 phantom.exit();
-            });
+            }, 15000);
         }
     });
 }
