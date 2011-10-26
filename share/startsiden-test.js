@@ -73,6 +73,7 @@ if (file) {
             page.evaluate(function() {
                 window.plan = function(n) {
                     console.log("1.." + n);
+                    QUnit.tap.noPlan = false;
                 }
                 window.diag = function(msg) {
                     console.log("# " + msg);
@@ -94,7 +95,9 @@ if (file) {
                 QUnit.config.blocking = false;
                 QUnit.config.autorun = true;
                 QUnit.config.updateRate = 0;
-                qunitTap(QUnit, function() { console.log.apply(console, arguments); });
+                qunitTap(QUnit, function() { console.log.apply(console, arguments); }, {
+                    noPlan: true
+                });
                 window.modules = 0;
                 window.tests = 0;
 
