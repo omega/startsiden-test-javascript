@@ -100,7 +100,6 @@ sub _run_rhino {
     $TAP ||= '';
     if($?) {
         # Error executing tests
-        warn "Could not execute rhino tests from $0.js: $? $! $TAP";
         exit $?;
     }
 }
