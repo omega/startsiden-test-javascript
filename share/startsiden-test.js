@@ -118,7 +118,7 @@ if (file) {
             waitFor(function() {
                 return page.evaluate(function() {
                     //console.log(window.tests + " " + window.modules);
-                    return (window.tests == 0 && window.modules == 0);
+                    return (window.tests == 0 && window.modules <= 0);
                 });
             }, function() {
                 //console.log("in another function");
