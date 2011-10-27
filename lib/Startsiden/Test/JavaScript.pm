@@ -58,7 +58,7 @@ sub js_test {
 
     push(@argv, find_test_lib());
     my $f;
-
+    $content ||= '<html><body></body></html>';
     if ($content and $content !~ /\n/ and -f $content) {
         # Content is a file :p
         push(@argv, $content);
@@ -72,7 +72,6 @@ sub js_test {
         $f = $file;
     }
     _run_rhino(@argv);
-    unlink($f) if $f;
 }
 
 sub _run_psgi {

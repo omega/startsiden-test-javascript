@@ -1,6 +1,13 @@
 /* We want to be able to look in different places! */
-
-var inc = phantom.args[2].split(':');
+var test_script = phantom.args[0];
+var input = phantom.args[1];
+var inc;
+if (phantom.args[2]) {
+    inc = phantom.args[2].split(':');
+} else {
+    inc = input.split(':');
+    input = undefined;
+}
 var fs = require('fs');
 
 function load(lib, into) {
@@ -59,17 +66,20 @@ page.onConsoleMessage = function(msg) {
     console.log(msg);
 };
 
-var file = phantom.args[1];
 
-if (file) {
-    page.open(file, function(status) {
+if (input) {
+    //console.log("Requesting page " + input);
+    page.open(input, function(status) {
+        //console.log("STATUS: " + status);
         if (status !== "success") {
-            console.log("# (" + status + ") Unable to access requested document " + file);
+            console.log("# (" + status + ") Unable to access requested document " + input);
             phantom.exit(1);
         } else {
-
+            //console.log("loading qunit " + page);
             load("qunit.js", page);
+            //console.log("loading qunit-tap");
             load("qunit-tap.js", page);
+            //console.log("done loading qunit-stuff");
             page.evaluate(function() {
                 window.plan = function(n) {
                     console.log("1.." + n);
@@ -115,8 +125,9 @@ if (file) {
                 });
 
             });
+            //console.log("injecting " + test_script);
 
-            page.injectJs(phantom.args[0]);
+            page.injectJs(test_script);
 
             waitFor(function() {
                 return page.evaluate(function() {
