@@ -16,7 +16,8 @@ test_requires 'Test::WWW::Mechanize::Catalyst';
 test_requires 'Catalyst::Plugin::Static::Simple';
 test_requires 'Catalyst::Plugin::ConfigLoader';
 test_requires 'Catalyst::Action::RenderView';
-requires 'Catalyst::Engine::PSGI';
+test_requires 'Catalyst::Runtime' => '5.90';
+#requires 'Catalyst::Engine::PSGI';
 
 install_share;
 
