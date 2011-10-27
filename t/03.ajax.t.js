@@ -21,5 +21,3 @@ test("For real, check the ajax!", function() {
         start();
     }, 1000);
 });
-
-Envjs.wait();
