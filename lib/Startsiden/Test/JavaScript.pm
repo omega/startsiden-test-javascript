@@ -34,8 +34,13 @@ sub js_live_test {
     if ($type eq 'cat') {
 
         Class::Load::load_class($app);
-        #$app->setup_engine('PSGI');
-        my $psgi = $app->psgi_app;
+        my $psgi;
+        if  ($app->can('psgi_app')) {
+            $psgi = $app->psgi_app;
+        } else {
+            $app->setup_engine('PSGI');
+            $psgi = sub { $app->run(@_) };
+        }
 
         _run_psgi($psgi, $url);
 
