@@ -69,7 +69,7 @@ sub js_test {
         push(@argv, $content);
     } elsif ($content) {
         # Need to write out the content to a temp-file
-        my ($fh, $file) = tempfile( DIR => 't/', SUFFIX => '.html', CLEANUP => 1 );
+        my ($fh, $file) = tempfile( DIR => 't/', SUFFIX => '.html' );
         print $fh $content;
         close $fh;
         # now to pass that to the JS test
@@ -77,6 +77,7 @@ sub js_test {
         $f = $file;
     }
     _run_rhino(@argv);
+    unlink($f) if $f;
 }
 
 sub _run_psgi {
