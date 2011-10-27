@@ -1,13 +1,15 @@
 /* We want to be able to look in different places! */
-var test_script = phantom.args[0];
-var input = phantom.args[1];
-var inc;
-if (phantom.args[2]) {
-    inc = phantom.args[2].split(':');
-} else {
-    inc = input.split(':');
-    input = undefined;
-}
+var args = phantom.args.slice(0);
+var test_script = args.shift();
+var inc, input;
+args.forEach(function(e) {
+    if (e.match(/^INC/)) {
+        inc = e.split(':');
+    } else {
+        input = e;
+    }
+});
+
 var fs = require('fs');
 
 function load(lib, into) {

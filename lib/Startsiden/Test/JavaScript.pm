@@ -102,7 +102,8 @@ sub _run_psgi {
 sub _run_rhino {
     my $cmd = 'phantomjs';
     # XXX: Should send in location for qunit etc probably
-    $cmd = "$cmd " . shift . " $0.js " . join(" ", @_, $ENV{JSINC});
+    my $inc = join(":", $ENV{JSINC}, '/usr/local/share/startsiden-javascript-qunit');
+    $cmd = "$cmd " . shift . " $0.js " . join(" ", @_, "INC:$inc");
     #warn "CMD: $cmd";
     my $TAP = Capture::Tiny::tee_merged { system($cmd) };
     $TAP ||= '';
