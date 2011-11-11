@@ -5,6 +5,7 @@ var inc, input;
 args.forEach(function(e) {
     if (e.match(/^INC/)) {
         inc = e.split(':');
+        inc[0] = "."; // we replace INC with .
     } else {
         input = e;
     }
@@ -20,7 +21,11 @@ function load(lib, into) {
         //console.log("  -> " + test);
         if (fs.isFile(test)) {
             //console.log("    -> FOUND");
-            into.injectJs(test);
+            if (into) {
+                into.injectJs(test);
+            } else {
+                phantom.injectJs(test);
+            }
         }
     });
 }
@@ -77,56 +82,8 @@ if (input) {
             console.log("# (" + status + ") Unable to access requested document " + input);
             phantom.exit(1);
         } else {
-            //console.log("loading qunit " + page);
-            load("qunit.js", page);
-            //console.log("loading qunit-tap");
-            load("qunit-tap.js", page);
-            //console.log("done loading qunit-stuff");
-            page.evaluate(function() {
-                window.plan = function(n) {
-                    console.log("1.." + n);
-                    QUnit.tap.noPlan = false;
-                }
-                window.diag = function(msg) {
-                    console.log("# " + msg);
-                }
-                window.addListener = function(target, name, func) {
-                    if (typeof target[name] === 'function') {
-                        var orig = target[name];
-                        target[name] = function() {
-                            var args = Array.prototype.slice.apply(arguments);
-                            orig.apply(target, args);
-                            func.apply(target, args);
-                        };
-                    } else {
-                        target[name] = func;
-                    }
-                };
-
-                QUnit.init();
-                QUnit.config.blocking = false;
-                QUnit.config.autorun = true;
-                QUnit.config.updateRate = 0;
-                qunitTap(QUnit, function() { console.log.apply(console, arguments); }, {
-                    noPlan: true
-                });
-                window.modules = 0;
-                window.tests = 0;
-
-                addListener(QUnit, 'moduleStart', function() {
-                    window.modules++;
-                });
-                addListener(QUnit, 'moduleDone', function() {
-                    window.modules--;
-                });
-                addListener(QUnit, 'testStart', function() {
-                    window.tests++;
-                });
-                addListener(QUnit, 'testDone', function() {
-                    window.tests--;
-                });
-
-            });
+            var bootstrap = setup(page);
+            page.evaluate(bootstrap);
             //console.log("injecting " + test_script);
 
             page.injectJs(test_script);
@@ -142,4 +99,71 @@ if (input) {
             }, 15000);
         }
     });
+} else {
+    console.log("OMG, no input, lets just run our script");
+    var bootstrap = setup(phantom);
+    bootstrap();
+
+    phantom.injectJs(test_script);
+    waitFor(function() {
+        return (window.tests == 0 && window.modules <= 0);
+    }, function() {
+        phantom.exit();
+    }, 15000);
 }
+
+
+
+function setup(obj) {
+    //console.log("loading qunit " + obj);
+    load("qunit.js", obj);
+    //console.log("loading qunit-tap");
+    load("qunit-tap.js", obj);
+    //console.log("done loading qunit-stuff");
+    return function() {
+        window.plan = function(n) {
+            console.log("1.." + n);
+            QUnit.tap.noPlan = false;
+        }
+        window.diag = function(msg) {
+            console.log("# " + msg);
+        }
+        window.addListener = function(target, name, func) {
+            if (typeof target[name] === 'function') {
+                var orig = target[name];
+                target[name] = function() {
+                    var args = Array.prototype.slice.apply(arguments);
+                    orig.apply(target, args);
+                    func.apply(target, args);
+                };
+            } else {
+                target[name] = func;
+            }
+        };
+
+        QUnit.init();
+        QUnit.config.blocking = false;
+        QUnit.config.autorun = true;
+        QUnit.config.updateRate = 0;
+        qunitTap(QUnit, function() { console.log.apply(console, arguments); }, {
+            noPlan: true
+        });
+        window.modules = 0;
+        window.tests = 0;
+
+        addListener(QUnit, 'moduleStart', function() {
+            window.modules++;
+        });
+        addListener(QUnit, 'moduleDone', function() {
+            window.modules--;
+        });
+        addListener(QUnit, 'testStart', function() {
+            window.tests++;
+        });
+        addListener(QUnit, 'testDone', function() {
+            window.tests--;
+        });
+
+    }
+}
+

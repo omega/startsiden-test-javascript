@@ -63,7 +63,6 @@ sub js_test {
 
     push(@argv, find_test_lib());
     my $f;
-    $content ||= '<html><body></body></html>';
     if ($content and $content !~ /\n/ and -f $content) {
         # Content is a file :p
         push(@argv, $content);
