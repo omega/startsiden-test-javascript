@@ -100,7 +100,7 @@ if (input) {
         }
     });
 } else {
-    console.log("OMG, no input, lets just run our script");
+    //console.log("OMG, no input, lets just run our script");
     var bootstrap = setup(phantom);
     bootstrap();
 
@@ -127,6 +127,10 @@ function setup(obj) {
         }
         window.diag = function(msg) {
             console.log("# " + msg);
+        }
+        window.alert = function(msg) {
+            console.log("ALERT!" + msg);
+            window.displayedAlert = msg;
         }
         window.addListener = function(target, name, func) {
             if (typeof target[name] === 'function') {
