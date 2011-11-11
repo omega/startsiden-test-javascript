@@ -2,7 +2,7 @@ package Startsiden::Test::JavaScript;
 use strict;
 use warnings;
 use base qw(Test::Builder::Module);
-our $VERSION = '0.004';
+our $VERSION = '0.005';
 my $CLASS = __PACKAGE__;
 
 use Sub::Exporter -setup => {
