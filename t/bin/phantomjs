@@ -1,0 +1,22 @@
+#!/bin/sh
+# This is a "fake" phantomjs, just outputting TAP if we are run with
+# a test lib for first argument
+
+if [ -z $1 ]; then
+    failout
+fi
+
+INP=`basename $1`
+
+if [ "$INP" == "startsiden-test.js" ]; then
+    echo "1..0 # Skipped: You do not have a propper phantomjs installed"
+    exit 0
+fi
+
+failout
+
+failout() {
+    echo "This is just a fake phantomjs, you cannot use it for anything";
+    exit 1;
+}
+
