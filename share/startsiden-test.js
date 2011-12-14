@@ -129,7 +129,7 @@ function setup(obj) {
             console.log("# " + msg);
         }
         window.alert = function(msg) {
-            console.log("ALERT!" + msg);
+            //console.log("ALERT!" + msg);
             window.displayedAlert = msg;
         }
         window.addListener = function(target, name, func) {
