@@ -2,6 +2,12 @@
 # This is a "fake" phantomjs, just outputting TAP if we are run with
 # a test lib for first argument
 
+failout() {
+    echo "This is just a fake phantomjs, you cannot use it for anything";
+    exit 1;
+}
+
+
 if [ -z $1 ]; then
     failout
 fi
@@ -14,9 +20,4 @@ if [ "$INP" == "startsiden-test.js" ]; then
 fi
 
 failout
-
-failout() {
-    echo "This is just a fake phantomjs, you cannot use it for anything";
-    exit 1;
-}
 
