@@ -91,7 +91,13 @@ if (input) {
             waitFor(function() {
                 return page.evaluate(function() {
                     //console.log(window.tests + " " + window.modules);
-                    return (window.tests == 0 && window.modules <= 0);
+                    // This is intentionally a duplicate of the code below. The
+                    // closure closes over the wrong window if not.
+                    var res = (window.tests == 0 && window.modules <= 0);
+                    if (res) {
+                        console.log("1.." + window.totalTests);
+                    }
+                    return res;
                 });
             }, function() {
                 //console.log("in another function");
@@ -106,7 +112,13 @@ if (input) {
 
     phantom.injectJs(test_script);
     waitFor(function() {
-        return (window.tests == 0 && window.modules <= 0);
+        // This is intentionally duplicate of above. It would close over the
+        // wrong window object if reused it seems
+        var res = (window.tests == 0 && window.modules <= 0);
+        if (res) {
+            console.log("1.." + window.totalTests);
+        }
+        return res;
     }, function() {
         phantom.exit();
     }, 15000);
@@ -122,8 +134,8 @@ function setup(obj) {
     //console.log("done loading qunit-stuff");
     return function() {
         window.plan = function(n) {
-            console.log("1.." + n);
-            QUnit.tap.noPlan = false;
+            // plan is a no-op now really, we only do done_testing to speak in
+            // Test::More terms
         }
         window.diag = function(msg) {
             console.log("# " + msg);
@@ -150,22 +162,30 @@ function setup(obj) {
         QUnit.config.autorun = true;
         QUnit.config.updateRate = 0;
         qunitTap(QUnit, function() { console.log.apply(console, arguments); }, {
-            noPlan: true
+            noPlan: false
         });
         window.modules = 0;
         window.tests = 0;
+        window.totalTests = 0;
 
         addListener(QUnit, 'moduleStart', function() {
             window.modules++;
+            QUnit.tap.moduleStart.apply(QUnit, Array.prototype.slice.apply(arguments));
         });
         addListener(QUnit, 'moduleDone', function() {
             window.modules--;
         });
         addListener(QUnit, 'testStart', function() {
             window.tests++;
+            QUnit.tap.testStart.apply(QUnit, Array.prototype.slice.apply(arguments));
+        });
+        addListener(QUnit, 'log', function() {
+            window.totalTests++;
+            QUnit.tap.log.apply(QUnit, Array.prototype.slice.apply(arguments));
         });
         addListener(QUnit, 'testDone', function() {
             window.tests--;
+            QUnit.tap.done.apply(QUnit, Array.prototype.slice.apply(arguments));
         });
 
     }
