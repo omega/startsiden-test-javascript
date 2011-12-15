@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # This is a "fake" phantomjs, just outputting TAP if we are run with
 # a test lib for first argument
 
@@ -8,7 +8,7 @@ failout() {
 }
 
 
-if [ -z $1 ]; then
+if [ -z "$1" ]; then
     failout
 fi
 
