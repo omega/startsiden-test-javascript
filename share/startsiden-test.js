@@ -175,6 +175,14 @@ function setup(obj) {
         addListener(QUnit, 'moduleDone', function() {
             window.modules--;
         });
+        QUnit.done(function(data) {
+            //console.log("done done?" + QUnit.config);
+            if (! QUnit.config.currentModule) {
+                // We have no current module, so lets set modules to 0
+                window.modules = 0;
+            }
+        });
+
         addListener(QUnit, 'testStart', function() {
             window.tests++;
             QUnit.tap.testStart.apply(QUnit, Array.prototype.slice.apply(arguments));
