@@ -175,7 +175,7 @@ function setup(obj) {
         addListener(QUnit, 'moduleDone', function() {
             window.modules--;
         });
-        QUnit.done(function(data) {
+        addListener(QUnit, 'done', function(data) {
             //console.log("done done?" + QUnit.config);
             if (! QUnit.config.currentModule) {
                 // We have no current module, so lets set modules to 0
