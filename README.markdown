@@ -29,10 +29,14 @@ there might be differences.
 
 ### QUnit
 
+https://github.com/jquery/qunit
+
 I just cloned it to `~/Projects/js/qunit/`, and added `~/Projects/js/qunit/qunit` to
 my `JSINC`.
 
 ### qunit-tap
+
+https://github.com/twada/qunit-tap
 
 I cloned this as well to `~/Projects/js/qunit-tap`, and added
 `~/Projects/js/qunit-tap/lib` to my `JSINC
