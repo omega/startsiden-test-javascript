@@ -15,18 +15,9 @@ use Sub::Exporter -setup => {
 };
 
 use Startsiden::Test::JavaScript::Base;
-use File::ShareDir qw(dist_dir);
 use File::Temp qw(tempfile);
-use Path::Class;
-use Try::Tiny;
 
-use Plack::Test;
-use Plack::Builder qw();
-
-use HTTP::Request::Common;
 use Class::Load qw();
-
-use Capture::Tiny;
 
 sub js_live_test {
     my ($type, $app, $url) = @_;
@@ -43,7 +34,7 @@ sub js_live_test {
             $psgi = sub { $app->run(@_) };
         }
 
-        _run_psgi($psgi, $url);
+        $runner->_run_psgi($psgi, $url);
 
     } elsif ($type eq 'psgi') {
         # We try to load the psgi and use that
@@ -51,7 +42,7 @@ sub js_live_test {
 
         my $psgi = Plack::Util::load_psgi($app);
 
-        _run_psgi($psgi, $url);
+        $runner->_run_psgi($psgi, $url);
     } elsif (!$app and !$url) {
         _run_os_command($runner->find_test_lib(), $type); # Only one arg, must be url!
     } else {
@@ -81,24 +72,4 @@ sub js_test {
     unlink($f) if $f;
 }
 
-sub _run_psgi {
-    my ($psgi, $url) = @_;
-    my $runner = Startsiden::Test::JavaScript::Base->new();
-    $Plack::Test::Impl = 'Server' unless $ENV{PLACK_TEST_IMPL};
-    $ENV{PLACK_SERVER} ||= 'HTTP::Server::Simple';
-    my $app = Plack::Builder::builder {
-        if ($ENV{TEST_VERBOSE}) {
-            # XXX: Fix the format to be a bit nicer.. too much info now.
-            # Remember to start with #, since we output TAP
-            Plack::Builder::enable 'Plack::Middleware::AccessLog';
-        }
-        $psgi;
-    };
-    test_psgi $app, sub {
-        my @argv;
-
-        push(@argv, $runner->find_test_lib(), shift->(GET $url)->base);
-        $runner->_run_os_command(@argv);
-    };
-}
 1;

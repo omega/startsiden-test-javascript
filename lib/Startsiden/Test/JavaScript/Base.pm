@@ -1,10 +1,34 @@
 package Startsiden::Test::JavaScript::Base;
 use Moose;
 use File::ShareDir qw(dist_dir);
-use Try::Tiny;
-use File::Temp qw(tempfile);
 use Path::Class;
+use Try::Tiny;
 use Capture::Tiny;
+
+use Plack::Test;
+use Plack::Builder qw();
+
+use HTTP::Request::Common;
+
+sub _run_psgi {
+    my ($self, $psgi, $url) = @_;
+    $Plack::Test::Impl = 'Server' unless $ENV{PLACK_TEST_IMPL};
+    $ENV{PLACK_SERVER} ||= 'HTTP::Server::Simple';
+    my $app = Plack::Builder::builder {
+        if ($ENV{TEST_VERBOSE}) {
+            # XXX: Fix the format to be a bit nicer.. too much info now.
+            # Remember to start with #, since we output TAP
+            Plack::Builder::enable 'Plack::Middleware::AccessLog';
+        }
+        $psgi;
+    };
+    test_psgi $app, sub {
+        my @argv;
+
+        push(@argv, $self->find_test_lib(), shift->(GET $url)->base);
+        $self->_run_os_command(@argv);
+    };
+}
 
 sub find_test_lib {
     my ($self) = @_;
