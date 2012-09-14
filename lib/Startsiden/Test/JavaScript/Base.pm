@@ -4,6 +4,7 @@ use File::ShareDir qw(dist_dir);
 use Try::Tiny;
 use File::Temp qw(tempfile);
 use Path::Class;
+use Capture::Tiny;
 
 sub find_test_lib {
     my ($self) = @_;
@@ -33,6 +34,18 @@ sub find_test_lib {
         croak("Could not locate $f");
     }
     return $dir->file($f);
+}
+
+sub _run_os_command {
+    my ($self, @args) = @_;
+    my $cmd = $self->_generate_command(@args);
+    #warn "CMD: $cmd";
+    my $TAP = Capture::Tiny::tee_merged { system($cmd) };
+    $TAP ||= '';
+    if($?) {
+        # Error executing tests
+        exit $?;
+    }
 }
 
 sub _generate_command {

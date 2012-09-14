@@ -77,7 +77,7 @@ sub js_test {
         push(@argv, $file);
         $f = $file;
     }
-    _run_os_command(@argv);
+    $runner->_run_os_command(@argv);
     unlink($f) if $f;
 }
 
@@ -98,18 +98,7 @@ sub _run_psgi {
         my @argv;
 
         push(@argv, $runner->find_test_lib(), shift->(GET $url)->base);
-        _run_os_command(@argv);
+        $runner->_run_os_command(@argv);
     };
-}
-sub _run_os_command {
-    my $runner = Startsiden::Test::JavaScript::Base->new();
-    my $cmd = $runner->_generate_command(@_);
-    #warn "CMD: $cmd";
-    my $TAP = Capture::Tiny::tee_merged { system($cmd) };
-    $TAP ||= '';
-    if($?) {
-        # Error executing tests
-        exit $?;
-    }
 }
 1;
