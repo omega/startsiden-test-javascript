@@ -14,6 +14,7 @@ use Sub::Exporter -setup => {
     },
 };
 
+use Startsiden::Test::JavaScript::Base;
 use File::ShareDir qw(dist_dir);
 use File::Temp qw(tempfile);
 use Path::Class;
