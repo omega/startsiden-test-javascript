@@ -14,14 +14,14 @@ use Sub::Exporter -setup => {
     },
 };
 
-use Startsiden::Test::JavaScript::Base;
+use Startsiden::Test::JavaScript::PhantomJs;
 use File::Temp qw(tempfile);
 
 use Class::Load qw();
 
 sub js_live_test {
     my ($type, $app, $url) = @_;
-    my $runner = Startsiden::Test::JavaScript::Base->new();
+    my $runner = Startsiden::Test::JavaScript::PhantomJs->new();
 
     if ($type eq 'cat') {
 
@@ -51,7 +51,7 @@ sub js_live_test {
 }
 sub js_test {
     my ($content) = @_;
-    my $runner = Startsiden::Test::JavaScript::Base->new();
+    my $runner = Startsiden::Test::JavaScript::PhantomJs->new();
     my @argv;
 
     push(@argv, $runner->find_test_lib());
