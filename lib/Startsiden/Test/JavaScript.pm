@@ -115,7 +115,7 @@ sub _generate_command {
     my $inc = join(":", ($ENV{JSINC} ? $ENV{JSINC} : () ),
         '/usr/local/share/startsiden-javascript-qunit'
     );
-    $cmd = "$cmd " . $test . " $0.js " . join(" ", @args, "INC:$inc");
+    $cmd = join(" ", $cmd, $test, "$0.js", @args, "INC:$inc");
     return $cmd;
 }
 
