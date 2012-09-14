@@ -99,8 +99,7 @@ sub _run_psgi {
     };
 }
 sub _run_rhino {
-    my $test = shift;
-    my $cmd = _generate_command($test, @_);
+    my $cmd = _generate_command(@_);
     #warn "CMD: $cmd";
     my $TAP = Capture::Tiny::tee_merged { system($cmd) };
     $TAP ||= '';
