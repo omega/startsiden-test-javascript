@@ -52,7 +52,7 @@ sub js_live_test {
 
         _run_psgi($psgi, $url);
     } elsif (!$app and !$url) {
-        _run_rhino(find_test_lib(), $type); # Only one arg, must be url!
+        _run_os_command(find_test_lib(), $type); # Only one arg, must be url!
     } else {
         die "We do not support type $type together with app $app and url $url yet :/";
     }
@@ -75,7 +75,7 @@ sub js_test {
         push(@argv, $file);
         $f = $file;
     }
-    _run_rhino(@argv);
+    _run_os_command(@argv);
     unlink($f) if $f;
 }
 
@@ -95,10 +95,10 @@ sub _run_psgi {
         my @argv;
 
         push(@argv, find_test_lib(), shift->(GET $url)->base);
-        _run_rhino(@argv);
+        _run_os_command(@argv);
     };
 }
-sub _run_rhino {
+sub _run_os_command {
     my $cmd = _generate_command(@_);
     #warn "CMD: $cmd";
     my $TAP = Capture::Tiny::tee_merged { system($cmd) };
