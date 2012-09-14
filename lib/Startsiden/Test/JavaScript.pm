@@ -105,7 +105,7 @@ sub _run_rhino {
     my $inc = join(":", ($ENV{JSINC} ? $ENV{JSINC} : () ),
         '/usr/local/share/startsiden-javascript-qunit'
     );
-    $cmd = _generate_command($cmd, $test, "$0.js", $inc, @_);
+    $cmd = _generate_command($cmd, $test, $inc, @_);
     #warn "CMD: $cmd";
     my $TAP = Capture::Tiny::tee_merged { system($cmd) };
     $TAP ||= '';
@@ -115,8 +115,8 @@ sub _run_rhino {
     }
 }
 sub _generate_command {
-    my ($cmd, $test, $thisfile, $inc, @args) = @_;
-    $cmd = "$cmd " . $test . " $thisfile " . join(" ", @args, "INC:$inc");
+    my ($cmd, $test, $inc, @args) = @_;
+    $cmd = "$cmd " . $test . " $0.js " . join(" ", @args, "INC:$inc");
     return $cmd;
 }
 
