@@ -105,7 +105,7 @@ sub _run_rhino {
     my $inc = join(":", ($ENV{JSINC} ? $ENV{JSINC} : () ),
         '/usr/local/share/startsiden-javascript-qunit'
     );
-    $cmd = "$cmd " . $test . " $0.js " . join(" ", @_, "INC:$inc");
+    $cmd = _generate_command($cmd, $test, "$0.js", $inc, @_);
     #warn "CMD: $cmd";
     my $TAP = Capture::Tiny::tee_merged { system($cmd) };
     $TAP ||= '';
@@ -114,6 +114,12 @@ sub _run_rhino {
         exit $?;
     }
 }
+sub _generate_command {
+    my ($cmd, $test, $thisfile, $inc, @args) = @_;
+    $cmd = "$cmd " . $test . " $thisfile " . join(" ", @args, "INC:$inc");
+    return $cmd;
+}
+
 sub find_test_lib {
     # XXX: Need to support devel checkouts as well
 
