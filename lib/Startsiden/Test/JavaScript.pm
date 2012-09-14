@@ -102,7 +102,8 @@ sub _run_psgi {
     };
 }
 sub _run_os_command {
-    my $cmd = _generate_command(@_);
+    my $runner = Startsiden::Test::JavaScript::Base->new();
+    my $cmd = $runner->_generate_command(@_);
     #warn "CMD: $cmd";
     my $TAP = Capture::Tiny::tee_merged { system($cmd) };
     $TAP ||= '';
@@ -111,15 +112,4 @@ sub _run_os_command {
         exit $?;
     }
 }
-sub _generate_command {
-    my ($test, @args) = @_;
-    my $cmd = 'phantomjs';
-    # XXX: Should send in location for qunit etc probably
-    my $inc = join(":", ($ENV{JSINC} ? $ENV{JSINC} : () ),
-        '/usr/local/share/startsiden-javascript-qunit'
-    );
-    $cmd = join(" ", $cmd, $test, "$0.js", @args, "INC:$inc");
-    return $cmd;
-}
-
 1;
