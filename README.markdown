@@ -11,7 +11,7 @@ to a propper DOM etc.
 Well, we provide a simple perl-function to run a javascript file
 against a content-string. That way, so long as you can get the content in a perl
 scalar, you can run javascript against it. You can for instance use
-Catalyst::Test, or Test::WWWW::Mechanize::Catalyst to do that, without needing to
+Catalyst::Test, or Test::WWW::Mechanize::Catalyst to do that, without needing to
 fork a server etc.
 
 ## How do I test it?
