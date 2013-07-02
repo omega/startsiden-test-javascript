@@ -29,9 +29,11 @@ there might be differences.
 
 ### QUnit
 
+Caution: This QUnit-TAP does not work with QUnit `1.11.0` or above. Please stick with `1.10.0` until QUnit-TAP get an update.
+
 https://github.com/jquery/qunit
 
-I just cloned it to `~/Projects/js/qunit/`, and added `~/Projects/js/qunit/qunit` to
+I just cloned it to `~/Projects/js/qunit/`, and do `git checkout v1.10.0` then add `~/Projects/js/qunit/qunit` to
 my `JSINC`.
 
 ### qunit-tap
@@ -39,7 +41,7 @@ my `JSINC`.
 https://github.com/twada/qunit-tap
 
 I cloned this as well to `~/Projects/js/qunit-tap`, and added
-`~/Projects/js/qunit-tap/lib` to my `JSINC
+`~/Projects/js/qunit-tap/lib` to my `JSINC`
 
 ## I got all that installed, now what?
 
