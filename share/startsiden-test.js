@@ -161,7 +161,7 @@ function setup(obj) {
         QUnit.config.blocking = false;
         QUnit.config.autorun = true;
         QUnit.config.updateRate = 0;
-        qunitTap(QUnit, function() { console.log.apply(console, arguments); }, {
+        var tap = qunitTap(QUnit, function() { console.log.apply(console, arguments); }, {
             noPlan: false
         });
         window.modules = 0;
@@ -170,7 +170,7 @@ function setup(obj) {
 
         addListener(QUnit, 'moduleStart', function() {
             window.modules++;
-            QUnit.tap.moduleStart.apply(QUnit, Array.prototype.slice.apply(arguments));
+            tap.moduleStart.apply(QUnit, Array.prototype.slice.apply(arguments));
         });
         addListener(QUnit, 'moduleDone', function() {
             window.modules--;
@@ -185,15 +185,15 @@ function setup(obj) {
 
         addListener(QUnit, 'testStart', function() {
             window.tests++;
-            QUnit.tap.testStart.apply(QUnit, Array.prototype.slice.apply(arguments));
+            tap.testStart.apply(QUnit, Array.prototype.slice.apply(arguments));
         });
         addListener(QUnit, 'log', function() {
             window.totalTests++;
-            QUnit.tap.log.apply(QUnit, Array.prototype.slice.apply(arguments));
+            tap.log.apply(QUnit, Array.prototype.slice.apply(arguments));
         });
         addListener(QUnit, 'testDone', function() {
             window.tests--;
-            QUnit.tap.done.apply(QUnit, Array.prototype.slice.apply(arguments));
+            tap.done.apply(QUnit, Array.prototype.slice.apply(arguments));
         });
 
     }
