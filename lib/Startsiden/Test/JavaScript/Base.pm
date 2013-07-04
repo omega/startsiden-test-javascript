@@ -25,7 +25,10 @@ sub _run_psgi {
     test_psgi $app, sub {
         my @argv;
 
-        push(@argv, $self->find_test_lib(), shift->(GET $url)->base);
+        # we reset path to $url in case $url redirects
+        my $base = shift->(GET $url)->base;
+        $base->path($url);
+        push(@argv, $self->find_test_lib(), $base);
         $self->_run_os_command(@argv);
     };
 }
