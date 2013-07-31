@@ -5,7 +5,6 @@
             $().ready(function() {
                 $('#url').html($(location).attr('pathname'));
                 var $index = $(location).attr('href').indexOf('?');
-                console.log('index = '+$index);
                 $('#query').html($(location).attr('href').substring($index));
             });
         </script>
