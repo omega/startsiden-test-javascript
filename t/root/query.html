@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <script type="text/javascript" src="/static/jq.js"></script>
+        <script type="text/javascript">
+            $().ready(function() {
+                $('#url').html($(location).attr('pathname'));
+                var $index = $(location).attr('href').indexOf('?');
+                $('#query').html($(location).attr('href').substring($index));
+            });
+        </script>
+    </head>
+    <body>
+        <div id="url"></div>
+        <div id="query"></div>
+    </body>
+</html>
