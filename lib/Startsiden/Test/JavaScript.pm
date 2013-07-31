@@ -14,22 +14,14 @@ use Sub::Exporter -setup => {
     },
 };
 
-use File::ShareDir qw(dist_dir);
+use Startsiden::Test::JavaScript::PhantomJs;
 use File::Temp qw(tempfile);
-use Path::Class;
-use Try::Tiny;
 
-use Plack::Test;
-use Plack::Builder qw();
-
-use HTTP::Request::Common;
 use Class::Load qw();
 
-use Capture::Tiny;
-
 sub js_live_test {
-
     my ($type, $app, $url) = @_;
+    my $runner = Startsiden::Test::JavaScript::PhantomJs->new();
 
     if ($type eq 'cat') {
 
@@ -42,7 +34,7 @@ sub js_live_test {
             $psgi = sub { $app->run(@_) };
         }
 
-        _run_psgi($psgi, $url);
+        $runner->_run_psgi($psgi, $url);
 
     } elsif ($type eq 'psgi') {
         # We try to load the psgi and use that
@@ -50,18 +42,19 @@ sub js_live_test {
 
         my $psgi = Plack::Util::load_psgi($app);
 
-        _run_psgi($psgi, $url);
+        $runner->_run_psgi($psgi, $url);
     } elsif (!$app and !$url) {
-        _run_rhino(find_test_lib(), $type); # Only one arg, must be url!
+        _run_os_command($runner->find_test_lib(), $type); # Only one arg, must be url!
     } else {
         die "We do not support type $type together with app $app and url $url yet :/";
     }
 }
 sub js_test {
     my ($content) = @_;
+    my $runner = Startsiden::Test::JavaScript::PhantomJs->new();
     my @argv;
 
-    push(@argv, find_test_lib());
+    push(@argv, $runner->find_test_lib());
     my $f;
     if ($content and $content !~ /\n/ and -f $content) {
         # Content is a file :p
@@ -75,71 +68,8 @@ sub js_test {
         push(@argv, $file);
         $f = $file;
     }
-    _run_rhino(@argv);
+    $runner->_run_os_command(@argv);
     unlink($f) if $f;
 }
 
-sub _run_psgi {
-    my ($psgi, $url) = @_;
-    $Plack::Test::Impl = 'Server' unless $ENV{PLACK_TEST_IMPL};
-    $ENV{PLACK_SERVER} ||= 'HTTP::Server::Simple';
-    my $app = Plack::Builder::builder {
-        if ($ENV{TEST_VERBOSE}) {
-            # XXX: Fix the format to be a bit nicer.. too much info now.
-            # Remember to start with #, since we output TAP
-            Plack::Builder::enable 'Plack::Middleware::AccessLog';
-        }
-        $psgi;
-    };
-    test_psgi $app, sub {
-        my @argv;
-
-        push(@argv, find_test_lib(), shift->(GET $url)->base);
-        _run_rhino(@argv);
-    };
-}
-sub _run_rhino {
-    my $test = shift;
-    my $cmd = 'phantomjs';
-    # XXX: Should send in location for qunit etc probably
-    my $inc = join(":", ($ENV{JSINC} ? $ENV{JSINC} : () ),
-        '/usr/local/share/startsiden-javascript-qunit'
-    );
-    $cmd = "$cmd " . $test . " $0.js " . join(" ", @_, "INC:$inc");
-    #warn "CMD: $cmd";
-    my $TAP = Capture::Tiny::tee_merged { system($cmd) };
-    $TAP ||= '';
-    if($?) {
-        # Error executing tests
-        exit $?;
-    }
-}
-sub find_test_lib {
-    # XXX: Need to support devel checkouts as well
-
-    my $f = 'startsiden-test.js';
-    my $dir;
-    try {
-        $dir = dir(dist_dir('Startsiden-Test-JavaScript'));
-    };
-    unless ($dir and -f $dir->file($f)) {
-        # XXX: Argh, I hate this.
-        my $pkg = __PACKAGE__ . ".pm";
-
-        $pkg =~ s|::|/|g;
-        my $file = file($INC{$pkg});
-        $dir = $file->dir;
-        while ($dir->parent ne $dir) {
-            if (-d $dir->subdir('share')) {
-                $dir = $dir->subdir('share');
-                last;
-            }
-            $dir = $dir->parent;
-        }
-    }
-    unless (-f $dir->file($f)) {
-        croak("Could not locate $f");
-    }
-    return $dir->file($f);
-}
 1;
