@@ -67,6 +67,7 @@ sub _run_os_command {
     my ($self, @args) = @_;
     my $cmd = $self->_generate_command(@args);
     #warn "CMD: $cmd";
+    $cmd =~ s/&/\\&/g;
     my $TAP = Capture::Tiny::tee_merged { system($cmd) };
     $TAP ||= '';
     if($?) {
