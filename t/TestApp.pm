@@ -36,11 +36,9 @@ __PACKAGE__->config(
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
     root => 't/',
-    static => {
-        dirs => ['static'],
+    'Plugin::Static::Simple' => {
         include_path => ['t/root/static', 't/root'],
     }
-
 );
 
 # Start the application

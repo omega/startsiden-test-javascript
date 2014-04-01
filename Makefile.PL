@@ -6,6 +6,7 @@ all_from 'lib/Startsiden/Test/JavaScript.pm';
 
 requires 'Capture::Tiny';
 requires 'Catalyst::Engine::PSGI';
+requires 'Catalyst::Plugin::Static::Simple';
 requires 'Class::Load';
 requires 'File::ShareDir';
 requires 'File::Temp';
