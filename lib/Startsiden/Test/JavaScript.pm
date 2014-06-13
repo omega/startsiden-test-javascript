@@ -7,14 +7,15 @@ my $CLASS = __PACKAGE__;
 
 use Sub::Exporter -setup => {
     exports => [
-        qw(js_test js_live_test),
+        qw(js_test js_live_test js_karma_test),
     ],
     groups => {
-        default => [qw/js_test js_live_test/],
+        default => [qw/js_test js_live_test js_karma_test/],
     },
 };
 
 use Startsiden::Test::JavaScript::PhantomJs;
+use Startsiden::Test::JavaScript::Karma;
 use File::Temp qw(tempfile);
 
 use Class::Load qw();
@@ -70,6 +71,12 @@ sub js_test {
     }
     $runner->_run_os_command(@argv);
     unlink($f) if $f;
+}
+
+sub js_karma_test {
+    my ($args) = @_;
+    my $runner = Startsiden::Test::JavaScript::Karma->new();
+    $runner->_run_os_command($args);
 }
 
 1;
