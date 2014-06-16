@@ -15,6 +15,8 @@ requires 'Path::Class';
 requires 'Plack';
 requires 'Sub::Exporter';
 requires 'Try::Tiny';
+requires 'File::Share';
+requires 'JSON';
 
 test_requires 'Catalyst::Action::RenderView';
 test_requires 'Catalyst::Plugin::ConfigLoader';
@@ -24,5 +26,7 @@ test_requires 'Test::WWW::Mechanize::Catalyst';
 install_share;
 
 dpkg_requires 'startsiden-javascript-qunit';
+dpkg_requires 'python';
+dpkg_requires 'startsiden-nodejs';
 
 WriteAll;
