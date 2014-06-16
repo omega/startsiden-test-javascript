@@ -35,7 +35,7 @@ sub _generate_command {
         : '';
     my $karmaConfPath = $args->{karmaConfPath} || '';
     my $karma =
-"karma start $karmaConfPath --single-run --reporters tap --log-level LOG_DISABLE;";
+"karma start $karmaConfPath --single-run --browsers PhantomJS --reporters tap --log-level LOG_DISABLE;";
     my $cmd = "$tools $bower $npm $reporter $karma";
     return $cmd;
 }
