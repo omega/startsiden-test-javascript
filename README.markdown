@@ -170,3 +170,29 @@ You see we also do a setTimeout. This is to give our DOM time to change, since
 AJAX is by definition Async.
 
 *And there you have it, all summed up nicely!*
+
+### Karma
+
+In addition to the above methods, now you can your tests with Karma runner and PhantomJS. So you will need to following to make in work both on your machine and on the Builder.
+
+* Working PhantomJS.
+* `python` and `startsiden-nodejs` Debian packages are required in `Makefile.PL`.
+* If you have `bower.json` and `package.json`, they must be in the root folder of your project.
+
+Then, you can just create a test file that is similar to the following one.
+    
+    use Startsiden::Test::JavaScript;
+    
+    my $args = {
+        # Optional Karma configuration path if it is not Karma.conf.js
+        karmaConfPath => 't/07.karma.t.conf.js'
+    };
+
+    js_karma_test $args;
+    
+This is how it works right now.
+
+* Install `bower` and `karma-cli` NPM packages if they have not been installed yet.
+* Resolve Bower and NPM dependencies if `bower.json` and `package.json` exist.
+* Install `karma-tab-reporter` NPM package (a Karma plugin used to produce the TAP report) from the `share` folder.
+* Run Karma with options `--single-run --browsers PhantomJS --reporters tap --log-level LOG_DISABLE`.
