@@ -31,11 +31,11 @@ sub _generate_command {
         !-d $npm_dir . '/' . $reporter_dir
         ? 'npm install --silent '
         . dist_dir('Startsiden-Test-JavaScript') . '/'
-        . $reporter_dir
+        . $reporter_dir . ';'
         : '';
     my $karmaConfPath = $args->{karmaConfPath} || '';
     my $karma =
-"karma start $karmaConfPath --single-run --reporters tap --log-level LOG_DISABLE";
+"karma start $karmaConfPath --single-run --reporters tap --log-level LOG_DISABLE;";
     my $cmd = "$tools $bower $npm $reporter $karma";
     return $cmd;
 }
