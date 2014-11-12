@@ -1,2 +1,4 @@
 .*~
 .prove
+
+node_modules/

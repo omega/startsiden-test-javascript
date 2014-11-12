@@ -1,0 +1,16 @@
+{
+    "name": "karma-tab-reporter",
+    "version": "0.0.1",
+    "description": "Karma reporter that formats the results into the TAP format.",
+    "main": "index.js",
+    "repository": {
+    },
+    "author": {
+        "name": "Pongsan Sayampol",
+        "email": "aon@abctech-thailand.com"
+    },
+    "peerDependencies": {
+        "karma": ">=0.12"
+    },
+    "license": "ISC"
+}

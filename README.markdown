@@ -11,7 +11,7 @@ to a propper DOM etc.
 Well, we provide a simple perl-function to run a javascript file
 against a content-string. That way, so long as you can get the content in a perl
 scalar, you can run javascript against it. You can for instance use
-Catalyst::Test, or Test::WWWW::Mechanize::Catalyst to do that, without needing to
+Catalyst::Test, or Test::WWW::Mechanize::Catalyst to do that, without needing to
 fork a server etc.
 
 ## How do I test it?
@@ -29,9 +29,11 @@ there might be differences.
 
 ### QUnit
 
+Caution: This QUnit-TAP does not work with QUnit `1.11.0` or above. Please stick with `1.10.0` until QUnit-TAP get an update.
+
 https://github.com/jquery/qunit
 
-I just cloned it to `~/Projects/js/qunit/`, and added `~/Projects/js/qunit/qunit` to
+I just cloned it to `~/Projects/js/qunit/`, and do `git checkout v1.10.0` then add `~/Projects/js/qunit/qunit` to
 my `JSINC`.
 
 ### qunit-tap
@@ -39,7 +41,7 @@ my `JSINC`.
 https://github.com/twada/qunit-tap
 
 I cloned this as well to `~/Projects/js/qunit-tap`, and added
-`~/Projects/js/qunit-tap/lib` to my `JSINC
+`~/Projects/js/qunit-tap/lib` to my `JSINC`
 
 ## I got all that installed, now what?
 
@@ -168,3 +170,29 @@ You see we also do a setTimeout. This is to give our DOM time to change, since
 AJAX is by definition Async.
 
 *And there you have it, all summed up nicely!*
+
+### Karma
+
+In addition to the above methods, now you can your tests with Karma runner and PhantomJS. So you will need to following to make in work both on your machine and on the Builder.
+
+* Working PhantomJS.
+* `python` and `startsiden-nodejs` Debian packages are required in `Makefile.PL`.
+* If you have `bower.json` and `package.json`, they must be in the root folder of your project.
+
+Then, you can just create a test file that is similar to the following one.
+    
+    use Startsiden::Test::JavaScript;
+    
+    my $args = {
+        # Optional Karma configuration path if it is not Karma.conf.js
+        karmaConfPath => 't/07.karma.t.conf.js'
+    };
+
+    js_karma_test $args;
+    
+This is how it works right now.
+
+* Install `bower` and `karma-cli` NPM packages if they have not been installed yet.
+* Resolve Bower and NPM dependencies if `bower.json` and `package.json` exist.
+* Install `karma-tab-reporter` NPM package (a Karma plugin used to produce the TAP report) from the `share` folder.
+* Run Karma with options `--single-run --browsers PhantomJS --reporters tap --log-level LOG_DISABLE`.

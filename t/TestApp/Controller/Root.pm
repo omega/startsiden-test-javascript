@@ -34,8 +34,12 @@ sub new_content :Path('/new') {
 
 sub ajax :Path('/ajax') {
     my ( $self, $c ) = @_;
-    my $url = $c->uri_for('/static/jq.js');
     $c->serve_static_file('t/root/ajax.html');
+}
+
+sub query :Path('/query') {
+    my ( $self, $c ) = @_;
+    $c->serve_static_file('t/root/query.html');
 }
 
 sub end : ActionClass('RenderView') {}

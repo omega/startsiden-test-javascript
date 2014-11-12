@@ -1,4 +1,6 @@
 use t::TestApp;
-t::TestApp->setup_engine('PSGI');
-my $app = sub { t::TestApp->run(@_) };
+use Plack::Builder;
 
+builder { 
+	t::TestApp->psgi_app( @_ ); 
+};

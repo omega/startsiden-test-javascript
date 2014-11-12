@@ -1,0 +1,31 @@
+{
+    "name": "startsiden-test-javascript",
+    "version": "0.0.1",
+    "description": "So, the problem we are always facing.. How do we test javascript? and user interface javascript at that?",
+    "main": "index.js",
+    "dependencies": {},
+    "devDependencies": {
+        "grunt": "^0.4.5",
+        "grunt-karma": "^0.8.3",
+        "grunt-port-pick": "^1.4.0",
+        "karma": "^0.12.16",
+        "karma-jasmine": "^0.1.5",
+        "karma-phantomjs-launcher": "^0.1.4",
+        "load-grunt-config": "^0.9.2",
+        "load-grunt-tasks": "^0.5.0",
+        "time-grunt": "^0.3.2"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/startsiden/startsiden-test-javascript.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/startsiden/startsiden-test-javascript/issues"
+    },
+    "homepage": "https://github.com/startsiden/startsiden-test-javascript"
+}
